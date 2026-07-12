@@ -11,7 +11,7 @@ on:
         type: boolean
         default: false
 
-# Auto-stop after Aug 11, 2026 handled inside the job (skips if past that date).
+# Auto-stop after Aug 30, 2026 handled inside the job (skips if past that date).
 
 jobs:
   check:
@@ -22,7 +22,7 @@ jobs:
       - name: Stop after end date
         id: window
         run: |
-          END="2026-08-11"
+          END="2026-08-30"
           NOW=$(date -u +%Y-%m-%d)
           if [[ "$NOW" > "$END" ]]; then
             echo "Past $END — skipping. You can delete this workflow now."
