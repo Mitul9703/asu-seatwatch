@@ -3,8 +3,13 @@ name: ASU Seat Watch
 # Runs in GitHub's cloud on a schedule — your laptop does NOT need to be on.
 on:
   schedule:
-    - cron: "8 * * * *"   # every hour at :08 past (UTC). Adjust if you like.
-  workflow_dispatch: {}     # lets you run it manually from the Actions tab
+    - cron: "8 * * * *"   # every hour at :08 past (UTC).
+  workflow_dispatch:          # lets you run it manually from the Actions tab
+    inputs:
+      test:
+        description: "Send a test WhatsApp message instead of checking seats"
+        type: boolean
+        default: false
 
 # Auto-stop after Aug 11, 2026 handled inside the job (skips if past that date).
 
@@ -43,4 +48,5 @@ jobs:
           WHATSAPP_PHONE: ${{ secrets.WHATSAPP_PHONE }}
           CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
           CLASS_NUMBER: "87932"
+          TEST_MODE: ${{ github.event.inputs.test }}
         run: python check_seats.py

@@ -75,6 +75,16 @@ def parse_open_seats(text):
 
 
 def main():
+    # Test mode: send a WhatsApp message immediately, skip the seat check.
+    if os.environ.get("TEST_MODE", "").strip().lower() in ("1", "true", "yes"):
+        print("TEST_MODE on — sending a test WhatsApp message.")
+        notify(
+            "✅ ASU Seat Watch test",
+            "This is a test. If you got this on WhatsApp, alerts work! "
+            "You'll be messaged when CSE 598 Agentic AI opens a seat.",
+        )
+        return
+
     text = get_page_text()
 
     if CLASS_NUMBER not in text:
