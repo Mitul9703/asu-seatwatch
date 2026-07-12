@@ -1,0 +1,46 @@
+name: ASU Seat Watch
+
+# Runs in GitHub's cloud on a schedule — your laptop does NOT need to be on.
+on:
+  schedule:
+    - cron: "8 * * * *"   # every hour at :08 past (UTC). Adjust if you like.
+  workflow_dispatch: {}     # lets you run it manually from the Actions tab
+
+# Auto-stop after Aug 11, 2026 handled inside the job (skips if past that date).
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stop after end date
+        id: window
+        run: |
+          END="2026-08-11"
+          NOW=$(date -u +%Y-%m-%d)
+          if [[ "$NOW" > "$END" ]]; then
+            echo "Past $END — skipping. You can delete this workflow now."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.window.outputs.skip == 'false'
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        if: steps.window.outputs.skip == 'false'
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Check seats
+        if: steps.window.outputs.skip == 'false'
+        env:
+          WHATSAPP_PHONE: ${{ secrets.WHATSAPP_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          CLASS_NUMBER: "87932"
+        run: python check_seats.py
