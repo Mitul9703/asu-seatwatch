@@ -3,7 +3,7 @@ name: ASU Seat Watch
 # Runs in GitHub's cloud on a schedule — your laptop does NOT need to be on.
 on:
   schedule:
-    - cron: "8 * * * *"   # every hour at :08 past (UTC).
+    - cron: "2,17,32,47 * * * *"   # every 15 minutes (UTC). GitHub cron can lag a few min under load.
   workflow_dispatch:          # lets you run it manually from the Actions tab
     inputs:
       test:
